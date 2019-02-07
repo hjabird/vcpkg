@@ -11,11 +11,11 @@
 #
 
 include(vcpkg_common_functions)
-set(SOURCE_PATH ${CURRENT_BUILDTREES_DIR}/src/bsv_v0.1.0)
+set(SOURCE_PATH ${CURRENT_BUILDTREES_DIR}/src/bsv-0.1.1)
 vcpkg_download_distfile(ARCHIVE
-    URLS "https://github.com/hjabird/bsv/archive/bsv_v0.1.0.zip"
-    FILENAME "bsv_v0.1.0.zip"
-    SHA512 68ea6737783fe09ec97fc0cde4a8eb89275000d2f094a97a1b93f05787872a3c677b5804b6f3bd72dcc0225cc665adc4a7815b4477dee537e0b00de323f01dc2
+    URLS "https://github.com/hjabird/bsv/archive/0.1.1.zip"
+    FILENAME "bsv-v0.1.1.zip"
+    SHA512 efa4e5fd2e994239749de1268a25766f55639906e157cbcf7b2b67297912683ec27d47faf789c2e0ddc29a180a70fa2a55a16d1bd45c6f55dbfbf04665d24015
 )
 vcpkg_extract_source_archive(${ARCHIVE})
 
@@ -29,8 +29,11 @@ vcpkg_configure_cmake(
 
 vcpkg_install_cmake()
 
+vcpkg_fixup_cmake_targets(CONFIG_PATH lib/cmake/bsv)
+file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug ${CURRENT_PACKAGES_DIR}/lib)
+
 # Handle copyright
-# file(INSTALL ${SOURCE_PATH}/LICENSE DESTINATION ${CURRENT_PACKAGES_DIR}/share/bsv RENAME copyright)
+file(INSTALL ${SOURCE_PATH}/LICENSE DESTINATION ${CURRENT_PACKAGES_DIR}/share/bsv RENAME copyright)
 
 # Post-build test for cmake libraries
 # vcpkg_test_cmake(PACKAGE_NAME bsv)
