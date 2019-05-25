@@ -2,6 +2,21 @@ if(VCPKG_CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
     message(FATAL_ERROR "${PORT} does not currently support UWP")
 endif()
 
+if("wchar" IN_LIST FEATURES)
+    list(APPEND ACE_FEATURE_LIST "uses_wchar=1")
+endif()
+if("zlib" IN_LIST FEATURES)
+    list(APPEND ACE_FEATURE_LIST "zlib=1")
+else()
+    list(APPEND ACE_FEATURE_LIST "zlib=0")
+endif()
+if("ssl" IN_LIST FEATURES)
+    list(APPEND ACE_FEATURE_LIST "ssl=1")
+else()
+    list(APPEND ACE_FEATURE_LIST "ssl=0")
+endif()
+list(JOIN ACE_FEATURE_LIST "," ACE_FEATURES)
+
 if (VCPKG_LIBRARY_LINKAGE STREQUAL static)
   if(NOT VCPKG_CMAKE_SYSTEM_NAME)
     set(DLL_DECORATOR s)
@@ -13,9 +28,9 @@ set(ACE_ROOT ${CURRENT_BUILDTREES_DIR}/src/ACE_wrappers)
 set(ENV{ACE_ROOT} ${ACE_ROOT})
 set(SOURCE_PATH ${CURRENT_BUILDTREES_DIR}/src/ACE_wrappers/ace)
 vcpkg_download_distfile(ARCHIVE
-    URLS "https://github.com/DOCGroup/ACE_TAO/releases/download/ACE%2BTAO-6_5_4/ACE-src-6.5.4.zip"
-    FILENAME ACE-src-6.5.4.zip
-    SHA512 e699b24aa65c44137b7bdbe3c045b6c8d76c43ff4c78a05efe6d0d7fd05acdd1166b74529cc4d7ba9440b6b29cce3aa2dcc97f574c94afc05b0fef18475d6ce3
+    URLS "https://github.com/DOCGroup/ACE_TAO/releases/download/ACE%2BTAO-6_5_5/ACE-src-6.5.5.zip"
+    FILENAME ACE-src-6.5.5.zip
+    SHA512 65696e6f2776fd9c015adb78a92f1c87edacde62ff11f20f88c416d4420a6fc6e5176412c5f93262d06e67b89717499f8108f68582f70fea6ce05466c53415e9
 )
 vcpkg_extract_source_archive(${ARCHIVE})
 
@@ -36,7 +51,9 @@ endif()
 if(NOT VCPKG_CMAKE_SYSTEM_NAME)
   set(LIB_RELEASE_SUFFIX .lib)
   set(LIB_DEBUG_SUFFIX d.lib)
-  if(VCPKG_PLATFORM_TOOLSET MATCHES "v141")
+  if(VCPKG_PLATFORM_TOOLSET MATCHES "v142")
+    set(SOLUTION_TYPE vs2019)
+  elseif(VCPKG_PLATFORM_TOOLSET MATCHES "v141")
     set(SOLUTION_TYPE vs2017)
   else()
     set(SOLUTION_TYPE vc14)
@@ -56,7 +73,7 @@ endif()
 
 # Invoke mwc.pl to generate the necessary solution and project files
 vcpkg_execute_required_process(
-    COMMAND ${PERL} ${ACE_ROOT}/bin/mwc.pl -type ${SOLUTION_TYPE} ace ${MPC_STATIC_FLAG}
+    COMMAND ${PERL} ${ACE_ROOT}/bin/mwc.pl -type ${SOLUTION_TYPE} -features "${ACE_FEATURES}" ace ${MPC_STATIC_FLAG}
     WORKING_DIRECTORY ${ACE_ROOT}
     LOGNAME mwc-${TARGET_TRIPLET}
 )
@@ -65,6 +82,7 @@ if(NOT VCPKG_CMAKE_SYSTEM_NAME)
   vcpkg_build_msbuild(
     PROJECT_PATH ${SOURCE_PATH}/ace.sln
     PLATFORM ${MSBUILD_PLATFORM}
+    USE_VCPKG_INTEGRATION
   )
 endif()
 
@@ -104,6 +122,9 @@ install_ace_headers_subdirectory(${SOURCE_PATH} "os_include/arpa")
 install_ace_headers_subdirectory(${SOURCE_PATH} "os_include/net")
 install_ace_headers_subdirectory(${SOURCE_PATH} "os_include/netinet")
 install_ace_headers_subdirectory(${SOURCE_PATH} "os_include/sys")
+if("ssl" IN_LIST FEATURES)
+    install_ace_headers_subdirectory(${SOURCE_PATH} "SSL")
+endif()
 
 # Install the libraries
 function(install_ace_library SOURCE_PATH ACE_LIBRARY)
@@ -141,6 +162,9 @@ if(NOT VCPKG_CMAKE_SYSTEM_NAME)
   install_ace_library(${ACE_ROOT} "ACE_QoS")
 endif()
 install_ace_library(${ACE_ROOT} "ACE_RLECompression")
+if("ssl" IN_LIST FEATURES)
+    install_ace_library(${ACE_ROOT} "ACE_SSL")
+endif()
 
 # Handle copyright
 file(COPY ${ACE_ROOT}/COPYING DESTINATION ${CURRENT_PACKAGES_DIR}/share/ace)
