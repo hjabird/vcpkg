@@ -11,11 +11,11 @@
 #
 
 include(vcpkg_common_functions)
-set(SOURCE_PATH ${CURRENT_BUILDTREES_DIR}/src/bsv-0.1.2)
+set(SOURCE_PATH ${CURRENT_BUILDTREES_DIR}/src/bsv-0.2.0)
 vcpkg_download_distfile(ARCHIVE
-    URLS "https://github.com/hjabird/bsv/archive/0.1.2.zip"
-    FILENAME "bsv-v0.1.2.zip"
-    SHA512 47939be8cb102cc621d271507e853a5ec9ff0c37563949bca6f4fc7eee811c251940b550ae26b1970942a4f85fd8ee6d23f54cfdc03b9794f848330b306385fc
+    URLS "https://github.com/hjabird/bsv/archive/0.2.0.zip"
+    FILENAME "bsv-v0.2.0.zip"
+    SHA512 27f09c97a4446d90e543510e8e9c7cdd55e7ffcd55d39c60b013ea3de0ddc649b51aac263092e793b345b034f301b2f45df7179f8bb2729e6df912636718e873
 )
 vcpkg_extract_source_archive(${ARCHIVE})
 
