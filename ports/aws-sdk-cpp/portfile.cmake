@@ -3,8 +3,8 @@ vcpkg_buildpath_length_warning(37)
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO aws/aws-sdk-cpp
-    REF ad6c51d8c9e52eb74418d40b0a78021e890ef27f # 1.7.270
-    SHA512 a636c60bc07a58860dfd53a786edbc47b7974084c5b65dd1fca663f9521a92871e4830c71880498583e6e372ee141a6550cd88fd9649ab1017dd712e4c8ccb23
+    REF 819b17b3915b1e6a9b704998efcaa51711dd1357 # 1.8.4
+    SHA512 73647ca3426226236c476533d31038ebc8763d3f604b36089b10e645296c5012041cbc2c5bb8cec5d9ae593fe266edbef7bf278c924746f25186d3e6fc183158
     HEAD_REF master
 )
 
@@ -14,7 +14,7 @@ set(BUILD_ONLY core)
 
 include(${CMAKE_CURRENT_LIST_DIR}/compute_build_only.cmake)
 
-string(REPLACE ";" "\\\\\\\\\\\;" BUILD_ONLY "${BUILD_ONLY}")
+string(REPLACE ";" "\\\\\\\\\\;" BUILD_ONLY "${BUILD_ONLY}")
 
 vcpkg_configure_cmake(
     SOURCE_PATH ${SOURCE_PATH}
@@ -25,7 +25,7 @@ vcpkg_configure_cmake(
         -DENABLE_TESTING=OFF
         -DFORCE_SHARED_CRT=${FORCE_SHARED_CRT}
         -DCMAKE_DISABLE_FIND_PACKAGE_Git=TRUE
-        "-DBUILD_ONLY=${BUILD_ONLY}"
+        -DBUILD_ONLY=${BUILD_ONLY}
         -DBUILD_DEPS=OFF
 )
 
